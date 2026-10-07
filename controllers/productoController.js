@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import * as Producto from '@/models/productoModel';
 
-export function listar() {
-  return NextResponse.json(Producto.listar());
+export async function listar() {
+  return NextResponse.json(await Producto.listar());
 }
 
 export async function crear(request) {
@@ -13,7 +13,8 @@ export async function crear(request) {
       { status: 400 }
     );
   }
-  return NextResponse.json(Producto.crear({ nombre, precio }), { status: 201 });
+  const nuevo = await Producto.crear({ nombre, precio });
+  return NextResponse.json(nuevo, { status: 201 });
 }
 
 export async function actualizar(request, id) {
@@ -24,15 +25,15 @@ export async function actualizar(request, id) {
       { status: 400 }
     );
   }
-  const actualizado = Producto.actualizar(id, { nombre, precio });
+  const actualizado = await Producto.actualizar(id, { nombre, precio });
   if (!actualizado) {
     return NextResponse.json({ error: 'Producto no encontrado' }, { status: 404 });
   }
   return NextResponse.json(actualizado);
 }
 
-export function eliminar(id) {
-  const borrado = Producto.eliminar(id);
+export async function eliminar(id) {
+  const borrado = await Producto.eliminar(id);
   if (!borrado) {
     return NextResponse.json({ error: 'Producto no encontrado' }, { status: 404 });
   }

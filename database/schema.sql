@@ -1,0 +1,15 @@
+CREATE TABLE IF NOT EXISTS usuarios (
+  id SERIAL PRIMARY KEY,
+  usuario VARCHAR(50) UNIQUE NOT NULL,
+  password VARCHAR(32) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS productos (
+  id SERIAL PRIMARY KEY,
+  nombre VARCHAR(100) NOT NULL,
+  precio NUMERIC(10, 2) NOT NULL
+);
+
+INSERT INTO usuarios (usuario, password)
+VALUES ('admin', '0192023a7bbd73250516f069df18b500')
+ON CONFLICT (usuario) DO NOTHING;

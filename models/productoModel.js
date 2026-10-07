@@ -1,41 +1,33 @@
-import fs from 'fs';
-import path from 'path';
+import pool from '@/lib/db';
 
-const archivo = path.join(process.cwd(), 'data', 'productos.json');
-
-function leer() {
-  return JSON.parse(fs.readFileSync(archivo, 'utf-8'));
+export async function listar() {
+  const resultado = await pool.query(
+    'SELECT id, nombre, precio FROM productos ORDER BY id'
+  );
+  return resultado.rows;
 }
 
-function guardar(lista) {
-  fs.writeFileSync(archivo, JSON.stringify(lista, null, 2));
+export async function crear({ nombre, precio }) {
+  const resultado = await pool.query(
+    'INSERT INTO productos (nombre, precio) VALUES ($1, $2) RETURNING id, nombre, precio',
+    [nombre, precio]
+  );
+  return resultado.rows[0];
 }
 
-export function listar() {
-  return leer();
+export async function actualizar(id, { nombre, precio }) {
+  const resultado = await pool.query(
+    'UPDATE productos SET nombre = $1, precio = $2 WHERE id = $3 RETURNING id, nombre, precio',
+    [nombre, precio, id]
+  );
+  if (resultado.rows.length === 0) return null;
+  return resultado.rows[0];
 }
 
-export function crear({ nombre, precio }) {
-  const lista = leer();
-  const nuevo = { id: Date.now(), nombre, precio: Number(precio) };
-  lista.push(nuevo);
-  guardar(lista);
-  return nuevo;
-}
-
-export function actualizar(id, { nombre, precio }) {
-  const lista = leer();
-  const posicion = lista.findIndex((p) => p.id === id);
-  if (posicion === -1) return null;
-  lista[posicion] = { ...lista[posicion], nombre, precio: Number(precio) };
-  guardar(lista);
-  return lista[posicion];
-}
-
-export function eliminar(id) {
-  const lista = leer();
-  const nueva = lista.filter((p) => p.id !== id);
-  if (nueva.length === lista.length) return false;
-  guardar(nueva);
-  return true;
+export async function eliminar(id) {
+  const resultado = await pool.query(
+    'DELETE FROM productos WHERE id = $1',
+    [id]
+  );
+  return resultado.rowCount > 0;
 }

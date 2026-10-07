@@ -5,7 +5,7 @@ import { crearToken } from '@/lib/session';
 export async function login(request) {
   const { usuario, password } = await request.json();
 
-  if (!validarCredenciales(usuario, password)) {
+  if (!(await validarCredenciales(usuario, password))) {
     return NextResponse.json(
       { error: 'Usuario o contraseña incorrectos' },
       { status: 401 }
