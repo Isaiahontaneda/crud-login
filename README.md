@@ -122,7 +122,7 @@ Usuario de prueba: `admin` / `admin123`.
 
 ## Video de demostración
 
-[ENLACE-DEL-VIDEO]
+(https://youtu.be/_Udp2pRp7mw)
 
 ## Autor
 
